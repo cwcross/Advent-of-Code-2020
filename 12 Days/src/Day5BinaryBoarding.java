@@ -17,7 +17,7 @@ public class Day5BinaryBoarding {
         }
     }
 
-    public static String[] readFile(String filePath) throws IOException {
+    public static String[] readFile(String filePath) {
         try {
             return Files.readAllLines(Path.of(filePath)).toArray(new String[0]);
         } catch (IOException e) {
