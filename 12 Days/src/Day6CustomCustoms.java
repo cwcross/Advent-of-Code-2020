@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Day6CustomCustoms {
 
@@ -24,19 +26,58 @@ public class Day6CustomCustoms {
         return addEntries(addUpCharacters(assembleGroupsTwo(readFile(filePath)))) ;
     }
 
+//    private static ArrayList<ArrayList<Character>> assembleGroupsTwo(String[] lines) {
+//        ArrayList<ArrayList<Character>> groups = new ArrayList<>();
+//
+//        groups.add(assembleUniqueAnswersTwo(lines, 0));
+//
+//        for (int i = 1; i < lines.length; i++) {
+//
+//            if (lines[i].trim().isEmpty()) {
+//                groups.add(assembleUniqueAnswersTwo(lines, i+1));
+//            }
+//
+//        }
+//        return groups;
+//    }
+
     private static ArrayList<ArrayList<Character>> assembleGroupsTwo(String[] lines) {
         ArrayList<ArrayList<Character>> groups = new ArrayList<>();
+        ArrayList<String> currentGroup = new ArrayList<>();
 
-        groups.add(assembleUniqueAnswersTwo(lines, 0));
+        for (String line : lines) {
+            if (line.trim().isEmpty()) {
+                groups.add(findCommonAnswers(currentGroup));
+                currentGroup.clear();
+            } else {
+                currentGroup.add(line);
+            }
+        }
 
-        for (int i = 1; i < lines.length; i++) {
+        if (!currentGroup.isEmpty()) {
+            groups.add(findCommonAnswers(currentGroup));
+        }
 
-            if (lines[i].trim().isEmpty()) {
-                groups.add(assembleUniqueAnswersTwo(lines, i+1));
+        return groups;
+    }
+
+    private static ArrayList<Character> findCommonAnswers(ArrayList<String> group) {
+        Set<Character> common = new HashSet<>();
+
+        for (int i = 0; i < group.size(); i++) {
+            Set<Character> personAnswers = new HashSet<>();
+            for (char c : group.get(i).toCharArray()) {
+                personAnswers.add(c);
             }
 
+            if (i == 0) {
+                common.addAll(personAnswers);
+            } else {
+                common.retainAll(personAnswers);  // intersection
+            }
         }
-        return groups;
+
+        return new ArrayList<>(common);
     }
 
     private static ArrayList<Character> assembleUniqueAnswersTwo(String[] lines, int start) {
@@ -54,16 +95,11 @@ public class Day6CustomCustoms {
                 break;
             }
 
-            for (int i = 1; i < line.length(); i++) {
+            for (int k = 0; k < answers.size(); k++) {
+                Character answer = answers.get(k);
 
-                Character c = line.charAt(i);
-
-                for (int k = 0; k < answers.size(); k++) {
-                    Character answer = answers.get(k);
-
-                    if (lines[i].contains(answer.toString())) continue;
-                    else answers.remove(answer);
-                }
+                if (lines[k].contains(answer.toString())) continue;
+                else answers.remove(answer);
             }
 
 
