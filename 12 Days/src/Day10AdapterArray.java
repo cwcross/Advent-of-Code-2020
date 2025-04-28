@@ -9,6 +9,7 @@ public class Day10AdapterArray {
         System.out.println(Arrays.toString(values));
         System.out.println(values.length);
         System.out.println(findDistribution(values));
+        System.out.println(countIterations(values));
     }
 
     public static int[] readFile(String filePath)  {
@@ -55,4 +56,44 @@ public class Day10AdapterArray {
         System.out.println("Threes: " + threes);
         return ones * threes;
     }
+
+//    public static long countIterations(int[] values) {
+//        long count = 0;
+//        long hits = 0;
+//        for (int i = 1; i < values.length-1; i++) {
+//            switch (values[i] - values[i-1]) {
+//                case 1:
+//                    if (values[i+1] - values[i] <= 2) {
+//                        count += (long) Math.pow(2, hits);
+//                        hits++;
+//                    }
+//                    break;
+//                case 2:
+//                    if (values[i+1] - values[i] <= 1) {
+//                        count += (long) Math.pow(2, hits);
+//                        hits++;
+//                    }
+//                    break;
+//                case 3:
+//                    continue;
+//            }
+//        }
+//        return count;
+//    }
+
+    public static long countIterations(int[] vals) {
+        int n = vals.length;
+        long[] ways = new long[n];
+        ways[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+            for (int j = i - 1; j >= 0 && vals[i] - vals[j] <= 3; j--) {
+                ways[i] += ways[j];
+            }
+        }
+
+        return ways[n - 1];
+    }
+
+
 }
