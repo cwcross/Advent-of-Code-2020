@@ -8,6 +8,7 @@ public class Day8HandheldHaunting {
         System.out.println("Day 8 Part 1: ");
         System.out.println(findValueBeforeRepeat("12 Days/Files/Day8.txt"));
         System.out.println("Day 8 Part 2: ");
+        System.out.println(fixCorruptedInstruction("12 Days/Files/Day8.txt"));
     }
 
     public static String[] readFile(String filePath)  {
@@ -50,6 +51,63 @@ public class Day8HandheldHaunting {
             default:
                 throw new IllegalArgumentException("Unknown instruction: " + action);
         }
+    }
+
+    public static int[] runProgramIterative(String[] data) {
+        int acc = 0;
+        int index = 0;
+        boolean[] visited = new boolean[data.length];
+
+        while (index < data.length) {
+            if (visited[index]) {
+                return new int[]{acc, 0};
+            }
+            visited[index] = true;
+
+            String line = data[index];
+            String op = line.substring(0, 3);
+            int arg = Integer.parseInt(line.substring(4));
+
+            switch (op) {
+                case "acc":
+                    acc += arg;
+                    index++;
+                    break;
+                case "jmp":
+                    index += arg;
+                    break;
+                case "nop":
+                    index++;
+                    break;
+            }
+        }
+
+        return new int[]{acc, 1};
+    }
+
+    public static Integer fixCorruptedInstruction(String filePath) {
+        String[] lines = readFile(filePath);
+
+        for (int i = 0; i < lines.length; i++) {
+            String op = lines[i].substring(0, 3);
+
+            if (op.equals("acc")) continue;
+
+            String[] modified = lines.clone();
+
+            if (op.equals("nop")) {
+                modified[i] = "jmp" + modified[i].substring(3);
+            } else if (op.equals("jmp")) {
+                modified[i] = "nop" + modified[i].substring(3);
+            }
+
+            int[] result = runProgramIterative(modified);
+            if (result[1] == 1) {
+                return result[0];
+            }
+        }
+
+        return null;
     }
 
 
